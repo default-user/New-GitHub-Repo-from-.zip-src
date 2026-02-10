@@ -15,9 +15,7 @@ pub fn acquire_token(mode: AuthMode) -> Result<String, Zip2RepoError> {
 
 fn token_from_env() -> Result<String, Zip2RepoError> {
     let t = std::env::var("GITHUB_TOKEN").map_err(|_| {
-        Zip2RepoError::Usage(
-            "Set GITHUB_TOKEN (fine-grained PAT) or use --auth gh".into(),
-        )
+        Zip2RepoError::Usage("Set GITHUB_TOKEN (fine-grained PAT) or use --auth gh".into())
     })?;
     if t.trim().is_empty() {
         return Err(Zip2RepoError::Usage("GITHUB_TOKEN is empty".into()));

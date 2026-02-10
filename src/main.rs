@@ -38,24 +38,24 @@ async fn run(cli: Cli) -> Result<i32, (String, i32)> {
     }
     let private = cli.private;
 
-    let token = auth::acquire_token(cli.auth).map_err(|e| map_err(e))?;
+    let token = auth::acquire_token(cli.auth).map_err(map_err)?;
 
     // 1) load zip bytes
     let bytes = zip::extract::load_zip_bytes(&cli.zip)
         .await
-        .map_err(|e| map_err(e))?;
+        .map_err(map_err)?;
 
     // 2) open + validate
-    let archive = zip::extract::open_zip(bytes.clone()).map_err(|e| map_err(e))?;
-    zip::validate::validate_zip(archive).map_err(|e| map_err(e))?;
+    let archive = zip::extract::open_zip(bytes.clone()).map_err(map_err)?;
+    zip::validate::validate_zip(archive).map_err(map_err)?;
 
     // 3) extract
-    let zip2 = zip::extract::open_zip(bytes).map_err(|e| map_err(e))?;
-    let (_td, root) = zip::extract::extract_to_temp(zip2).map_err(|e| map_err(e))?;
+    let zip2 = zip::extract::open_zip(bytes).map_err(map_err)?;
+    let (_td, root) = zip::extract::extract_to_temp(zip2).map_err(map_err)?;
 
     // 4) detect stack + scaffold
     let effective_stack = scaffold::detect::resolve_stack(&cli.stack, &root);
-    scaffold::write::scaffold_minimum(&root, &effective_stack).map_err(|e| map_err(e))?;
+    scaffold::write::scaffold_minimum(&root, &effective_stack).map_err(map_err)?;
 
     if cli.dry_run {
         println!(
@@ -70,18 +70,13 @@ async fn run(cli: Cli) -> Result<i32, (String, i32)> {
 
     let exists = github::preflight::repo_exists(&gh, &cli.owner, &cli.repo)
         .await
-        .map_err(|e| map_err(e))?;
+        .map_err(map_err)?;
 
     if !exists {
         // Attempt org create first; fall back to user create
         let created = github::repo_create::create_repo_org(&gh, &cli.owner, &cli.repo, private)
             .await
-            .or_else(|_| {
-                // Block on async: use a nested approach via tokio
-                // Actually we're already in async context, so just return the future
-                // We need to handle this differently since or_else is sync for Result
-                Err(Zip2RepoError::Permission("org create failed".into()))
-            });
+            .map_err(|_| Zip2RepoError::Permission("org create failed".into()));
 
         if created.is_err() {
             github::repo_create::create_repo_user(&gh, &cli.repo, private)
@@ -99,10 +94,9 @@ async fn run(cli: Cli) -> Result<i32, (String, i32)> {
     // 7) settings
     if cli.apply_settings {
         let check_names = vec!["build", "test"];
-        let result =
-            github::settings::apply_and_verify(&gh, &cli.owner, &cli.repo, &check_names)
-                .await
-                .map_err(|e| map_err(e))?;
+        let result = github::settings::apply_and_verify(&gh, &cli.owner, &cli.repo, &check_names)
+            .await
+            .map_err(map_err)?;
 
         if result.verified {
             return Ok(SUCCESS_FULL);

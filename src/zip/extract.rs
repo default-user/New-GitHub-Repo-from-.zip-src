@@ -1,18 +1,14 @@
 use crate::error::Zip2RepoError;
 use bytes::Bytes;
-use std::{
-    fs,
-    io::Cursor,
-    path::PathBuf,
-};
+use std::{fs, io::Cursor, path::PathBuf};
 use tempfile::TempDir;
 use url::Url;
 use zip::ZipArchive;
 
 pub async fn load_zip_bytes(zip_arg: &str) -> Result<Bytes, Zip2RepoError> {
     if zip_arg.starts_with("https://") {
-        let _u = Url::parse(zip_arg)
-            .map_err(|e| Zip2RepoError::Network(format!("bad url: {e}")))?;
+        let _u =
+            Url::parse(zip_arg).map_err(|e| Zip2RepoError::Network(format!("bad url: {e}")))?;
         let resp = reqwest::Client::new()
             .get(zip_arg)
             .send()
@@ -53,8 +49,7 @@ pub fn extract_to_temp(
 
         // directories
         if name.ends_with('/') {
-            fs::create_dir_all(root.join(&name))
-                .map_err(|e| Zip2RepoError::Io(e.to_string()))?;
+            fs::create_dir_all(root.join(&name)).map_err(|e| Zip2RepoError::Io(e.to_string()))?;
             continue;
         }
 
@@ -72,8 +67,7 @@ pub fn extract_to_temp(
         if let Some(parent) = out_path.parent() {
             fs::create_dir_all(parent).map_err(|e| Zip2RepoError::Io(e.to_string()))?;
         }
-        let mut out =
-            fs::File::create(&out_path).map_err(|e| Zip2RepoError::Io(e.to_string()))?;
+        let mut out = fs::File::create(&out_path).map_err(|e| Zip2RepoError::Io(e.to_string()))?;
         std::io::copy(&mut f, &mut out).map_err(|e| Zip2RepoError::Io(e.to_string()))?;
     }
 

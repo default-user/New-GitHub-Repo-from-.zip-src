@@ -18,7 +18,9 @@ fn scaffold_creates_expected_files() {
     assert!(root.join("docs/repo-settings-checklist.md").exists());
     assert!(root.join(".github/PULL_REQUEST_TEMPLATE.md").exists());
     assert!(root.join(".github/ISSUE_TEMPLATE/bug_report.yml").exists());
-    assert!(root.join(".github/ISSUE_TEMPLATE/feature_request.yml").exists());
+    assert!(root
+        .join(".github/ISSUE_TEMPLATE/feature_request.yml")
+        .exists());
     assert!(root.join(".github/ISSUE_TEMPLATE/config.yml").exists());
     assert!(root.join(".github/workflows/ci.yml").exists());
     assert!(root.join(".github/workflows/security-codeql.yml").exists());

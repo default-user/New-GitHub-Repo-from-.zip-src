@@ -27,9 +27,7 @@ pub fn validate_zip<R: Read + Seek>(mut zip: ZipArchive<R>) -> Result<(), Zip2Re
             )));
         }
         // normalize-ish: reject any .. segment
-        if name.split('/').any(|seg| seg == "..")
-            || name.split('\\').any(|seg| seg == "..")
-        {
+        if name.split('/').any(|seg| seg == "..") || name.split('\\').any(|seg| seg == "..") {
             return Err(Zip2RepoError::ZipValidation(format!(
                 "path traversal rejected: {name}"
             )));

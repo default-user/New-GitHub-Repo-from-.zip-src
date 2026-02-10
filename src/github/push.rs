@@ -6,13 +6,10 @@ pub fn init_and_commit(repo_root: &Path, message: &str) -> Result<Repository, Zi
     let repo = Repository::init(repo_root).map_err(|e| Zip2RepoError::Io(e.to_string()))?;
 
     {
-        let mut idx = repo
-            .index()
-            .map_err(|e| Zip2RepoError::Io(e.to_string()))?;
+        let mut idx = repo.index().map_err(|e| Zip2RepoError::Io(e.to_string()))?;
         idx.add_all(["*"].iter(), IndexAddOption::DEFAULT, None)
             .map_err(|e| Zip2RepoError::Io(e.to_string()))?;
-        idx.write()
-            .map_err(|e| Zip2RepoError::Io(e.to_string()))?;
+        idx.write().map_err(|e| Zip2RepoError::Io(e.to_string()))?;
         let tree_id = idx
             .write_tree()
             .map_err(|e| Zip2RepoError::Io(e.to_string()))?;
@@ -55,8 +52,7 @@ pub fn add_remote_and_push(
         .map_err(|e| Zip2RepoError::GitPush(e.to_string()))?;
 
     // Try pushing master as main first, fall back to master:master
-    let push_result =
-        remote.push(&["refs/heads/master:refs/heads/main"], Some(&mut push_opts));
+    let push_result = remote.push(&["refs/heads/master:refs/heads/main"], Some(&mut push_opts));
 
     if let Err(first_err) = push_result {
         // Rebuild callbacks for retry (consumed by first attempt)

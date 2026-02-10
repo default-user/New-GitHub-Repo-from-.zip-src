@@ -1,11 +1,7 @@
 use crate::error::Zip2RepoError;
 use octocrab::Octocrab;
 
-pub async fn repo_exists(
-    gh: &Octocrab,
-    owner: &str,
-    repo: &str,
-) -> Result<bool, Zip2RepoError> {
+pub async fn repo_exists(gh: &Octocrab, owner: &str, repo: &str) -> Result<bool, Zip2RepoError> {
     let r = gh.repos(owner, repo).get().await;
     match r {
         Ok(_) => Ok(true),

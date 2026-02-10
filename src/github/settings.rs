@@ -28,9 +28,7 @@ pub async fn apply_and_verify(
 
     // Apply branch protection on main
     let route = format!("/repos/{owner}/{repo}/branches/main/protection");
-    let apply_result: Result<serde_json::Value, _> = gh
-        .put(&route, Some(&payload))
-        .await;
+    let apply_result: Result<serde_json::Value, _> = gh.put(&route, Some(&payload)).await;
 
     let branch_protection_applied = match apply_result {
         Ok(_) => true,
@@ -42,9 +40,7 @@ pub async fn apply_and_verify(
 
     // Readback verification
     let verified = if branch_protection_applied {
-        let readback: Result<serde_json::Value, _> = gh
-            .get(&route, None::<&()>)
-            .await;
+        let readback: Result<serde_json::Value, _> = gh.get(&route, None::<&()>).await;
         match readback {
             Ok(val) => {
                 // Verify key fields exist

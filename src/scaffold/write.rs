@@ -50,10 +50,7 @@ pub fn scaffold_minimum(repo_root: &Path, stack: &Stack) -> Result<(), Zip2RepoE
     ensure_file(&repo_root.join("CONTRIBUTING.md"), t::CONTRIBUTING_MD)?;
     ensure_file(&repo_root.join("CODE_OF_CONDUCT.md"), t::CODE_OF_CONDUCT_MD)?;
 
-    ensure_file(
-        &repo_root.join("docs/integrations.md"),
-        t::INTEGRATIONS_MD,
-    )?;
+    ensure_file(&repo_root.join("docs/integrations.md"), t::INTEGRATIONS_MD)?;
     ensure_file(
         &repo_root.join("docs/repo-settings-checklist.md"),
         t::SETTINGS_CHECKLIST_MD,
@@ -86,10 +83,7 @@ pub fn scaffold_minimum(repo_root: &Path, stack: &Stack) -> Result<(), Zip2RepoE
     )?;
 
     let dependabot = dependabot_yml_for_stack(stack);
-    ensure_file(
-        &repo_root.join(".github/dependabot.yml"),
-        &dependabot,
-    )?;
+    ensure_file(&repo_root.join(".github/dependabot.yml"), &dependabot)?;
 
     Ok(())
 }
