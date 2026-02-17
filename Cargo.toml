@@ -10,7 +10,7 @@ anyhow = "1"
 thiserror = "2"
 reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
 tokio = { version = "1.39", features = ["rt-multi-thread", "macros"] }
-zip = "2"
+zip = "8"
 walkdir = "2"
 tempfile = "3"
 serde = { version = "1", features = ["derive"] }
